@@ -18,7 +18,7 @@ def generate_response(model, tokenizer, query, max_new_tokens=512):
     input_text = tokenizer.apply_chat_template(
         messages,
         tokenize=False,
-        add_generation_prompt=True  # 确保与训练时一致
+        add_generation_prompt=True  # 训练时一致
     )
 
     inputs = tokenizer(input_text, return_tensors="pt")

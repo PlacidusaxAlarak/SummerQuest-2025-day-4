@@ -25,15 +25,13 @@ class SearchTool:
         print(f"SearchTool已经被初始化,模型在设备{self.device}上")
 
     def _generate(self, messages: List[Dict[str, str]]) -> str:
-        """
-        一个私有方法,负责调用模型生成文本
-        """
+        # 一个私有方法,负责调用模型生成文本
         try:
             # 准备输入
             prompt = self.tokenizer.apply_chat_template(
                 messages,
                 tokenize=False,
-                add_generation_prompt=True  # 加上能触发模型恢复的token
+                add_generation_prompt=True  # 加上能触发模型回复的token
             )
             inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
             # 生成文本

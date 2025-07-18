@@ -84,10 +84,10 @@ class Data:
         # 对提取关键词进行了优化
         # 匹配多种精确的、类似代码的调用格式
         patterns = [
-            r'["“]\s*(?:keyword|关键词)\s*["”]\s*[:=]\s*["“]([^"”]+)["”]',
-            r'\bsearch\s*\(\s*["“]([^"”]+)["”]',
-            r'\bsearch\s+keyword\s*=\s*["“]([^"”]+)["”]',
-            r'\{\s*(?:keyword|关键词)\s*:\s*["“]([^"”]+)["”]',
+            r'["“]\s*(?:keyword|关键词)\s*["”]\s*[:=]\s*["“]([^"”]+)["”]',  # 键值对keyword:,关键词:
+            r'\bsearch\s*\(\s*["“]([^"”]+)["”]',  # search()
+            r'\bsearch\s+keyword\s*=\s*["“]([^"”]+)["”]',  # search(keyword="")
+            r'\{\s*(?:keyword|关键词)\s*:\s*["“]([^"”]+)["”]',  # {keyword:} or {关键词:}
         ]
 
         for pattern in patterns:
@@ -95,13 +95,13 @@ class Data:
             if match:
                 return match.group(1).strip()
 
-        # 策略 2: 匹配指令式的自然语言调用
+        # 策略:匹配指令式的自然语言调用
         intent_pattern = r'(?:调用|使用|输入|执行)\s*(?:搜索工具|搜索)\s*.*?关键词\s*(?:是|为)?\s*[:：]?\s*["“]([^"”]+)["”]'
         match = re.search(intent_pattern, response_text)
         if match:
             return match.group(1).strip()
 
-        # 策略 3: 分析 <think> 块中的模糊意图 (作为强大的后备)
+        # 策略:分析 <think> 块中的模糊意图 (作为强大的后备)
         think_match = re.search(r"<think>(.*?)</think>", response_text, re.DOTALL)
         if think_match:
             thought = think_match.group(1)
@@ -110,9 +110,8 @@ class Data:
                 if keyword_extract_match:
                     return keyword_extract_match.group(1).strip()
                 else:
-                    # 【最终后备策略】如果无法从思考中提取，使用整个问题作为关键词
+                    # 使用整个问题作为关键词
                     return question
-
         # 如果所有策略都失败，则返回 None
         return None
 
